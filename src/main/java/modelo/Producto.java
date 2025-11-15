@@ -20,4 +20,44 @@ public abstract class Producto {
         this.precio = precio;
         this.cantidadStock = cantidadStock;
     }
-}
+
+    public abstract double calcularValorInventario();
+    
+    @Override
+    public String toString() {
+        return "Código: " + codigo + " | Nombre: " + nombre + 
+               " | Precio: $" + precio + " | Stock: " + cantidadStock;
+    }
+    
+    public String getCodigo() {
+        return codigo;
+    }
+    
+    public void setCodigo(String codigo) {
+        this.codigo = codigo;
+    }
+    
+    public String getNombre() {
+        return nombre;
+    }
+    
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+    
+    public double getPrecio() {
+        return precio;
+    }
+    
+    public void setPrecio(double precio) {
+        this.precio = precio;
+    }
+    
+    public int getCantidadStock() {
+        return cantidadStock;
+    }
+    
+    public void setCantidadStock(int cantidadStock) {
+        this.cantidadStock = cantidadStock;
+    }
+}    

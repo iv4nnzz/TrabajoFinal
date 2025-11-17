@@ -32,6 +32,12 @@ public class ProductoNoPerecedero extends Producto {
                " meses | Tipo: NO PERECEDERO";
     }
     
+    @Override
+    public double aplicarDescuento(double porcentaje) { //nuevo
+        double descuentoFinal = (mesesGarantia > 12) ? porcentaje / 2 : porcentaje;
+        return precio * (1 - descuentoFinal / 100.0);
+    }
+    
     public int getMesesGarantia() {
         return mesesGarantia;
     }

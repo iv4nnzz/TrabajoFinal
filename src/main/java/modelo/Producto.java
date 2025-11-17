@@ -23,6 +23,13 @@ public abstract class Producto {
 
     public abstract double calcularValorInventario();
     
+    public abstract double aplicarDescuento(double porcentaje);
+
+    
+    public boolean tieneBajoStock() {
+        return cantidadStock < 10;
+    }
+    
     @Override
     public String toString() {
         return "Código: " + codigo + " | Nombre: " + nombre + 

@@ -569,11 +569,98 @@ public class InterfazPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_txtCantidadProductoActionPerformed
 
     private void btnGenerarFacturaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarFacturaActionPerformed
-
+        if (facturaActual == null || facturaActual.getItems().isEmpty()) {
+            JOptionPane.showMessageDialog(this, 
+                "⚠️ No hay items en la factura", 
+                "Error", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        for (ItemFactura item : facturaActual.getItems()) {
+            controladorInventario.reducirStock(
+                item.getProducto().getCodigo(), 
+                item.getCantidad()
+            );
+        }
+        
+        controladorFacturacion.agregarFactura(facturaActual);
+        
+        txtAreaFactura.setText(facturaActual.toString());
+        
+        actualizarVistaInventario();
+        actualizarEstadisticas();
+        
+        JOptionPane.showMessageDialog(this, 
+            "✅ Factura generada exitosamente\n\n" +
+            "Número: " + facturaActual.getNumero() + "\n" +
+            "Total: $" + String.format("%,.2f", facturaActual.getTotal()), 
+            "Factura Generada", JOptionPane.INFORMATION_MESSAGE);
+        
+        facturaActual = null;
+        clienteActual = null;
     }//GEN-LAST:event_btnGenerarFacturaActionPerformed
 
     private void btnAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarActionPerformed
-
+       try {
+            if (txtCodigo.getText().trim().isEmpty() || 
+                txtNombre.getText().trim().isEmpty() ||
+                txtPrecio.getText().trim().isEmpty() || 
+                txtCantidad.getText().trim().isEmpty() ||
+                txtDatoEspecial.getText().trim().isEmpty()) {
+                
+                JOptionPane.showMessageDialog(this, 
+                    "⚠️ Todos los campos son obligatorios", 
+                    "Error de Validación", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            String codigo = txtCodigo.getText().trim();
+            String nombre = txtNombre.getText().trim();
+            double precio = Double.parseDouble(txtPrecio.getText().trim());
+            int cantidad = Integer.parseInt(txtCantidad.getText().trim());
+            String datoEspecial = txtDatoEspecial.getText().trim();
+            String tipo = cmbTipo.getSelectedItem().toString();
+            
+            if (precio <= 0 || cantidad < 0) {
+                JOptionPane.showMessageDialog(this, 
+                    "⚠️ Precio y cantidad deben ser valores positivos", 
+                    "Error de Validación", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            Producto nuevoProducto;
+            if (tipo.equals("Perecedero")) {
+                nuevoProducto = new ProductoPerecedero(codigo, nombre, precio, 
+                    cantidad, datoEspecial);
+            } else {
+                int mesesGarantia = Integer.parseInt(datoEspecial);
+                nuevoProducto = new ProductoNoPerecedero(codigo, nombre, precio, 
+                    cantidad, mesesGarantia);
+            }
+            
+            if (controladorInventario.agregarProducto(nuevoProducto)) {
+                JOptionPane.showMessageDialog(this, 
+                    "✅ Producto agregado exitosamente\n\n" +
+                    "Código: " + codigo + "\n" +
+                    "Nombre: " + nombre + "\n" +
+                    "Precio: $" + String.format("%,.2f", precio), 
+                    "Operación Exitosa", JOptionPane.INFORMATION_MESSAGE);
+                limpiarCamposInventario();
+                actualizarVistaInventario();
+                actualizarEstadisticas();
+            } else {
+                JOptionPane.showMessageDialog(this, 
+                    "❌ El código del producto ya existe\n\n" +
+                    "Por favor use un código diferente.", 
+                    "Error", JOptionPane.ERROR_MESSAGE);
+            }
+            
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, 
+                "❌ Error en el formato de los números\n\n" +
+                "Verifique que precio, cantidad y dato especial sean numéricos.", 
+                "Error de Formato", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnAgregarActionPerformed
 
     private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed

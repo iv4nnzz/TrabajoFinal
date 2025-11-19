@@ -136,6 +136,7 @@ public class InterfazPrincipal extends javax.swing.JFrame {
         txtAreaEstadisticas.append(String.format("💵 Total Vendido: $%,.2f\n", totalVentas));
     }
     
+
     private void limpiarCamposInventario() {
         txtCodigo.setText("");
         txtNombre.setText("");
@@ -597,11 +598,63 @@ public class InterfazPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_btnOrdenarActionPerformed
 
     private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
-
+        String criterio = JOptionPane.showInputDialog(this, 
+            "Ingrese el nombre del producto a buscar:", 
+            "Buscar Producto", 
+            JOptionPane.QUESTION_MESSAGE);
+        
+        if (criterio != null && !criterio.trim().isEmpty()) {
+            java.util.ArrayList<Producto> resultados = 
+                controladorInventario.buscarProducto(criterio, true);
+            
+            txtAreaInventario.setText("");
+            txtAreaInventario.append("╔════════════════════════════════════════════════════════════════╗\n");
+            txtAreaInventario.append("║           🔍 RESULTADOS DE BÚSQUEDA                           ║\n");
+            txtAreaInventario.append("╚════════════════════════════════════════════════════════════════╝\n\n");
+            
+            if (resultados.isEmpty()) {
+                txtAreaInventario.append("❌ No se encontraron productos con ese nombre.\n");
+            } else {
+                txtAreaInventario.append(String.format("✅ Se encontraron %d producto(s):\n\n", resultados.size()));
+                for (Producto p : resultados) {
+                    txtAreaInventario.append(p.toString() + "\n");
+                    txtAreaInventario.append(String.format("💰 Valor Inventario: $%,.2f\n", 
+                        p.calcularValorInventario()));
+                    txtAreaInventario.append("─".repeat(60) + "\n\n");
+                }
+            }
+        }
     }//GEN-LAST:event_btnBuscarActionPerformed
 
     private void btnExportarFacturaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExportarFacturaActionPerformed
-
+       String numeroFactura = JOptionPane.showInputDialog(this,
+            "Ingrese el número de factura a exportar:",
+            "Exportar Factura",
+            JOptionPane.QUESTION_MESSAGE);
+        
+        if (numeroFactura != null && !numeroFactura.trim().isEmpty()) {
+            Factura factura = controladorFacturacion.buscarFactura(numeroFactura);
+            
+            if (factura == null) {
+                JOptionPane.showMessageDialog(this,
+                    "❌ Factura no encontrada",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            String rutaArchivo = "Factura_" + numeroFactura + ".txt";
+            
+            if (controladorFacturacion.exportarFactura(factura, rutaArchivo)) {
+                JOptionPane.showMessageDialog(this,
+                    "✅ Factura exportada exitosamente\n\n" +
+                    "Archivo: " + rutaArchivo,
+                    "Exportación Exitosa", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this,
+                    "❌ Error al exportar la factura",
+                    "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }//GEN-LAST:event_btnExportarFacturaActionPerformed
 
     private void btnVerHistorialActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVerHistorialActionPerformed

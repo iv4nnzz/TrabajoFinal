@@ -136,7 +136,6 @@ public class InterfazPrincipal extends javax.swing.JFrame {
         txtAreaEstadisticas.append(String.format("💵 Total Vendido: $%,.2f\n", totalVentas));
     }
     
-
     private void limpiarCamposInventario() {
         txtCodigo.setText("");
         txtNombre.setText("");
@@ -578,23 +577,177 @@ public class InterfazPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_btnAgregarActionPerformed
 
     private void btnEditarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarActionPerformed
-
+        try {
+            String codigo = txtCodigo.getText().trim();
+            
+            if (codigo.isEmpty()) {
+                JOptionPane.showMessageDialog(this, 
+                    "⚠️ Ingrese el código del producto a editar", 
+                    "Campo Requerido", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            
+            Producto productoExistente = controladorInventario.buscarProducto(codigo);
+            if (productoExistente == null) {
+                JOptionPane.showMessageDialog(this, 
+                    "❌ Producto no encontrado\n\n" +
+                    "Código: " + codigo, 
+                    "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            String nombre = txtNombre.getText().trim();
+            double precio = Double.parseDouble(txtPrecio.getText().trim());
+            int cantidad = Integer.parseInt(txtCantidad.getText().trim());
+            String datoEspecial = txtDatoEspecial.getText().trim();
+            String tipo = cmbTipo.getSelectedItem().toString();
+            
+            Producto productoActualizado;
+            if (tipo.equals("Perecedero")) {
+                productoActualizado = new ProductoPerecedero(codigo, nombre, precio, 
+                    cantidad, datoEspecial);
+            } else {
+                int mesesGarantia = Integer.parseInt(datoEspecial);
+                productoActualizado = new ProductoNoPerecedero(codigo, nombre, precio, 
+                    cantidad, mesesGarantia);
+            }
+            
+            if (controladorInventario.editarProducto(codigo, productoActualizado)) {
+                JOptionPane.showMessageDialog(this, 
+                    "✅ Producto editado exitosamente\n\n" +
+                    "Los cambios han sido guardados.", 
+                    "Operación Exitosa", JOptionPane.INFORMATION_MESSAGE);
+                limpiarCamposInventario();
+                actualizarVistaInventario();
+                actualizarEstadisticas();
+            }
+            
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, 
+                "❌ Error en el formato de los números", 
+                "Error de Formato", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnEditarActionPerformed
 
     private void btnLimpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimpiarActionPerformed
+                limpiarCamposInventario();
     }//GEN-LAST:event_btnLimpiarActionPerformed
 
     private void btnAgregarItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarItemActionPerformed
-
+        try {
+            if (facturaActual == null) {
+                String cedula = txtCedulaCliente.getText().trim();
+                String nombreCliente = txtNombreCliente.getText().trim();
+                String telefono = txtTelefonoCliente.getText().trim();
+                
+                if (cedula.isEmpty() || nombreCliente.isEmpty() || telefono.isEmpty()) {
+                    JOptionPane.showMessageDialog(this, 
+                        "⚠️ Complete los datos del cliente primero", 
+                        "Datos Requeridos", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+                
+                clienteActual = new Cliente(cedula, nombreCliente, telefono);
+                facturaActual = controladorFacturacion.crearFactura(clienteActual);
+                
+                txtAreaFactura.setText("");
+                txtAreaFactura.append("╔═══════════════════════════════════════════════════════════════╗\n");
+                txtAreaFactura.append("║                    🧾 NUEVA FACTURA                           ║\n");
+                txtAreaFactura.append("╚═══════════════════════════════════════════════════════════════╝\n\n");
+                txtAreaFactura.append("Número: " + facturaActual.getNumero() + "\n");
+                txtAreaFactura.append("Cliente: " + clienteActual.getNombre() + "\n");
+                txtAreaFactura.append("Cédula: " + clienteActual.getCedula() + "\n");
+                txtAreaFactura.append("Teléfono: " + clienteActual.getTelefono() + "\n");
+                txtAreaFactura.append("\n" + "═".repeat(63) + "\n");
+                txtAreaFactura.append("PRODUCTOS:\n");
+                txtAreaFactura.append("═".repeat(63) + "\n\n");
+            }
+            
+            String codigoProducto = txtCodigoProducto.getText().trim();
+            int cantidadProducto = Integer.parseInt(txtCantidadProducto.getText().trim());
+            
+            if (codigoProducto.isEmpty() || cantidadProducto <= 0) {
+                JOptionPane.showMessageDialog(this, 
+                    "⚠️ Ingrese código y cantidad válidos", 
+                    "Datos Inválidos", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+            
+            Producto producto = controladorInventario.buscarProducto(codigoProducto);
+            if (producto == null) {
+                JOptionPane.showMessageDialog(this, 
+                    "❌ Producto no encontrado\n\nCódigo: " + codigoProducto, 
+                    "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            if (!controladorInventario.verificarStock(codigoProducto, cantidadProducto)) {
+                JOptionPane.showMessageDialog(this, 
+                    "❌ Stock insuficiente\n\n" +
+                    "Disponible: " + producto.getCantidadStock() + " unidades\n" +
+                    "Solicitado: " + cantidadProducto + " unidades", 
+                    "Error de Stock", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            
+            ItemFactura item = new ItemFactura(producto, cantidadProducto);
+            facturaActual.agregarItem(item);
+            
+            txtAreaFactura.append("✓ " + item.toString() + "\n");
+            
+            txtCodigoProducto.setText("");
+            txtCantidadProducto.setText("");
+            txtCodigoProducto.requestFocus();
+            
+            JOptionPane.showMessageDialog(this, 
+                "✅ Item agregado a la factura", 
+                "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, 
+                "❌ Error en el formato de la cantidad", 
+                "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_btnAgregarItemActionPerformed
 
     private void btnNuevaFacturaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevaFacturaActionPerformed
-
+        txtCedulaCliente.setText("");
+        txtNombreCliente.setText("");
+        txtTelefonoCliente.setText("");
+        txtCodigoProducto.setText("");
+        txtCantidadProducto.setText("");
+        txtAreaFactura.setText("");
+        facturaActual = null;
+        clienteActual = null;
+        txtCedulaCliente.requestFocus();
     
     }//GEN-LAST:event_btnNuevaFacturaActionPerformed
 
     private void btnOrdenarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOrdenarActionPerformed
-
+        String[] opciones = {"Por Nombre", "Por Precio", "Por Stock"};
+        int seleccion = JOptionPane.showOptionDialog(this,
+            "Seleccione el criterio de ordenamiento:",
+            "Ordenar Productos",
+            JOptionPane.DEFAULT_OPTION,
+            JOptionPane.QUESTION_MESSAGE,
+            null, opciones, opciones[0]);
+        
+        switch (seleccion) {
+            case 0:
+                controladorInventario.ordenarPorNombre();
+                JOptionPane.showMessageDialog(this, "✅ Productos ordenados por nombre");
+                break;
+            case 1:
+                controladorInventario.ordenarPorPrecio();
+                JOptionPane.showMessageDialog(this, "✅ Productos ordenados por precio");
+                break;
+            case 2:
+                controladorInventario.ordenarPorStock();
+                JOptionPane.showMessageDialog(this, "✅ Productos ordenados por stock");
+                break;
+        }
+        
+        actualizarVistaInventario();
     }//GEN-LAST:event_btnOrdenarActionPerformed
 
     private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed

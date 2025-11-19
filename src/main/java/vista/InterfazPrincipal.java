@@ -605,7 +605,33 @@ public class InterfazPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_btnExportarFacturaActionPerformed
 
     private void btnVerHistorialActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVerHistorialActionPerformed
-
+        txtAreaFactura.setText("");
+        txtAreaFactura.append("╔═══════════════════════════════════════════════════════════════╗\n");
+        txtAreaFactura.append("║              📋 HISTORIAL DE FACTURAS                         ║\n");
+        txtAreaFactura.append("╚═══════════════════════════════════════════════════════════════╝\n\n");
+        
+        java.util.ArrayList<Factura> facturas = controladorFacturacion.obtenerTodas();
+        
+        if (facturas.isEmpty()) {
+            txtAreaFactura.append("No hay facturas registradas.\n");
+        } else {
+            int contador = 1;
+            for (Factura f : facturas) {
+                txtAreaFactura.append(String.format("🧾 FACTURA #%d\n", contador++));
+                txtAreaFactura.append("─".repeat(63) + "\n");
+                txtAreaFactura.append("Número: " + f.getNumero() + "\n");
+                txtAreaFactura.append("Fecha: " + f.getFecha() + "\n");
+                txtAreaFactura.append("Cliente: " + f.getCliente().getNombre() + "\n");
+                txtAreaFactura.append(String.format("Total: $%,.2f\n", f.getTotal()));
+                txtAreaFactura.append("Items: " + f.getItems().size() + "\n");
+                txtAreaFactura.append("\n");
+            }
+            
+            txtAreaFactura.append("═".repeat(63) + "\n");
+            txtAreaFactura.append(String.format("Total de Facturas: %d\n", facturas.size()));
+            txtAreaFactura.append(String.format("Total Vendido: $%,.2f\n", 
+                controladorFacturacion.calcularTotalVentas()));
+        }
     }//GEN-LAST:event_btnVerHistorialActionPerformed
 
     private void btnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActualizarActionPerformed

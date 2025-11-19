@@ -561,7 +561,32 @@ public class InterfazPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_txtDatoEspecialActionPerformed
 
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
-
+                String codigo = txtCodigo.getText().trim();
+        
+        if (codigo.isEmpty()) {
+            JOptionPane.showMessageDialog(this, 
+                "Ingrese el código del producto a eliminar", 
+                "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        int confirmacion = JOptionPane.showConfirmDialog(this, 
+            "¿Está seguro de eliminar este producto?", 
+            "Confirmar", JOptionPane.YES_NO_OPTION);
+        
+        if (confirmacion == JOptionPane.YES_OPTION) {
+            if (controladorInventario.eliminarProducto(codigo)) {
+                JOptionPane.showMessageDialog(this, 
+                    "Producto eliminado exitosamente", 
+                    "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                limpiarCamposInventario();
+                actualizarVistaInventario();
+            } else {
+                JOptionPane.showMessageDialog(this, 
+                    "Producto no encontrado", 
+                    "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }//GEN-LAST:event_btnEliminarActionPerformed
 
     private void txtCantidadProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCantidadProductoActionPerformed

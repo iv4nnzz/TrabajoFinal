@@ -28,6 +28,12 @@ public class ProductoPerecedero extends Producto {
                " | Tipo: PERECEDERO";
     }
     
+    @Override
+    public double aplicarDescuento(double porcentaje) { //nuevo
+        double descuentoTotal = porcentaje + 5.0;
+        return precio * (1 - descuentoTotal / 100.0);
+    }
+    
     public String getFechaVencimiento() {
         return fechaVencimiento;
     }

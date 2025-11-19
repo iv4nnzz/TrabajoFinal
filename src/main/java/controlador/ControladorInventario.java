@@ -82,4 +82,78 @@ public class ControladorInventario {
             producto.setCantidadStock(nuevoStock);
         }
     }
+    
+    //nuevo
+    
+    public ArrayList<Producto> buscarProducto(String nombre, boolean porNombre) {
+        ArrayList<Producto> resultados = new ArrayList<>();
+        if (porNombre) {
+            for (Producto p : productos) {
+                if (p.getNombre().toLowerCase().contains(nombre.toLowerCase())) {
+                    resultados.add(p);
+                }
+            }
+        }
+        return resultados;
+    }
+    
+    public ArrayList<Producto> buscarProducto(double precioMin, double precioMax) {
+        ArrayList<Producto> resultados = new ArrayList<>();
+        for (Producto p : productos) {
+            if (p.getPrecio() >= precioMin && p.getPrecio() <= precioMax) {
+                resultados.add(p);
+            }
+        }
+        return resultados;
+    }
+    
+    public ArrayList<Producto> obtenerProductosBajoStock() {
+        ArrayList<Producto> bajoStock = new ArrayList<>();
+        for (Producto p : productos) {
+            if (p.tieneBajoStock()) {
+                bajoStock.add(p);
+            }
+        }
+        return bajoStock;
+    }
+    
+    public double calcularValorTotalInventario() {
+        double total = 0.0;
+        for (Producto p : productos) {
+            total += p.calcularValorInventario();
+        }
+        return total;
+    }
+    
+    public int contarProductosPerecederos() {
+        int contador = 0;
+        for (Producto p : productos) {
+            if (p instanceof modelo.ProductoPerecedero) {
+                contador++;
+            }
+        }
+        return contador;
+    }
+    
+    public int contarProductosNoPerecederos() {
+        int contador = 0;
+        for (Producto p : productos) {
+            if (p instanceof modelo.ProductoNoPerecedero) {
+                contador++;
+            }
+        }
+        return contador;
+    }
+    
+    public void ordenarPorNombre() {
+        productos.sort((p1, p2) -> p1.getNombre().compareTo(p2.getNombre()));
+    }
+    
+    public void ordenarPorPrecio() {
+        productos.sort((p1, p2) -> Double.compare(p1.getPrecio(), p2.getPrecio()));
+    }
+    
+    public void ordenarPorStock() {
+        productos.sort((p1, p2) -> Integer.compare(p1.getCantidadStock(), p2.getCantidadStock()));
+    }
 }

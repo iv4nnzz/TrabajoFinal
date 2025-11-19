@@ -63,4 +63,27 @@ public class ControladorFacturacion {
     public ControladorInventario getControladorInventario() {
         return controladorInventario;
     }
+    
+    public double calcularTotalVentas() {
+        double total = 0.0;
+        for (Factura f : facturas) {
+            total += f.getTotal();
+        }
+        return total;
+    }
+    
+    public int obtenerCantidadFacturas() {
+        return facturas.size();
+    }
+    
+    public boolean exportarFactura(Factura factura, String rutaArchivo) {
+        try {
+            java.io.FileWriter writer = new java.io.FileWriter(rutaArchivo);
+            writer.write(factura.toString());
+            writer.close();
+            return true;
+        } catch (java.io.IOException e) {
+            return false;
+        }
+    }
 }

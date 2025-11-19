@@ -136,7 +136,6 @@ public class InterfazPrincipal extends javax.swing.JFrame {
         txtAreaEstadisticas.append(String.format("💵 Total Vendido: $%,.2f\n", totalVentas));
     }
     
-
     private void limpiarCamposInventario() {
         txtCodigo.setText("");
         txtNombre.setText("");
@@ -589,12 +588,43 @@ public class InterfazPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_btnAgregarItemActionPerformed
 
     private void btnNuevaFacturaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevaFacturaActionPerformed
-
+        txtCedulaCliente.setText("");
+        txtNombreCliente.setText("");
+        txtTelefonoCliente.setText("");
+        txtCodigoProducto.setText("");
+        txtCantidadProducto.setText("");
+        txtAreaFactura.setText("");
+        facturaActual = null;
+        clienteActual = null;
+        txtCedulaCliente.requestFocus();
     
     }//GEN-LAST:event_btnNuevaFacturaActionPerformed
 
     private void btnOrdenarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOrdenarActionPerformed
-
+        String[] opciones = {"Por Nombre", "Por Precio", "Por Stock"};
+        int seleccion = JOptionPane.showOptionDialog(this,
+            "Seleccione el criterio de ordenamiento:",
+            "Ordenar Productos",
+            JOptionPane.DEFAULT_OPTION,
+            JOptionPane.QUESTION_MESSAGE,
+            null, opciones, opciones[0]);
+        
+        switch (seleccion) {
+            case 0:
+                controladorInventario.ordenarPorNombre();
+                JOptionPane.showMessageDialog(this, "✅ Productos ordenados por nombre");
+                break;
+            case 1:
+                controladorInventario.ordenarPorPrecio();
+                JOptionPane.showMessageDialog(this, "✅ Productos ordenados por precio");
+                break;
+            case 2:
+                controladorInventario.ordenarPorStock();
+                JOptionPane.showMessageDialog(this, "✅ Productos ordenados por stock");
+                break;
+        }
+        
+        actualizarVistaInventario();
     }//GEN-LAST:event_btnOrdenarActionPerformed
 
     private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed

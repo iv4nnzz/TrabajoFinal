@@ -609,7 +609,11 @@ public class InterfazPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_btnVerHistorialActionPerformed
 
     private void btnActualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActualizarActionPerformed
-
+        actualizarVistaInventario();
+        actualizarEstadisticas();
+        JOptionPane.showMessageDialog(this, 
+            "✅ Vista actualizada correctamente", 
+            "Actualización", JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_btnActualizarActionPerformed
 
     public static void main(String args[]) {

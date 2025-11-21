@@ -1,0 +1,9 @@
+========== FACTURA ==========
+Número: FAC-0001
+Fecha: 17/11/2025
+Cliente: CC: 123123 | Nombre: david | Tel: 313132
+========== ITEMS ==========
+a | Cantidad: 2 | Precio Unit: $12.0 | Subtotal: $24.0
+===========================
+TOTAL: $24,00
+===========================

@@ -12,9 +12,8 @@ public class ControladorInventario {
     
     public ControladorInventario() {
         this.productos = new ArrayList<>();
-        cargarProductosDesdeArchivo(); // Cargar datos al iniciar
+        cargarProductosDesdeArchivo(); 
         
-        // Solo cargar datos de prueba si no hay productos guardados
         if (productos.isEmpty()) {
             cargarDatosPrueba();
             guardarProductosEnArchivo();
